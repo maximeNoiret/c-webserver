@@ -17,10 +17,7 @@ int main() {
   http_request request;
   http_request_init(&request);
 
-  int r = parse_request(&request, buf, n);
-  printf("Return: %i\n", r);
-
-  printf("Test\n");
+  parse_request(&request, buf, n);
   http_request_printInfo(&request);
 
   http_request_free(&request);
