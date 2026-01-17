@@ -32,7 +32,9 @@ void http_request_printInfo(http_request *arr) {
 }
 
 int parse_first_line(http_request *arr, char **curr_pos, size_t *length) {
-  /* extract method path version */
+    if (*length == 0) return -1;
+
+    /* extract method path version */
   // get first line
   char *end_line = memmem(*curr_pos, *length, "\r\n", 2);
   if (!end_line)
@@ -41,8 +43,8 @@ int parse_first_line(http_request *arr, char **curr_pos, size_t *length) {
   // extract
   *end_line = '\0';
 
-  char method[16], target[2048], version[16];
-  if (sscanf(*curr_pos, " %15s %2047s %15s", method, target, version) != 3)
+  char method[16], target[256], version[16];
+  if (sscanf(*curr_pos, " %15s %255s %15s", method, target, version) != 3)
     return -1;
 
   setstr(&arr->method, method);
@@ -61,13 +63,13 @@ int parse_headers(http_request *arr, char **curr_pos, size_t *length) {
 
   for (char *end_line; *curr_pos < end_of_headers; *curr_pos = end_line + 2) {
     end_line = memmem(*curr_pos, *length, "\r\n", 2);
-    char key[64], value[64];
+    char key[64], value[2048];
     if (!end_line)
       return -2;
     *length -= end_line - *curr_pos + 2;
     *end_line = '\0';
 
-    if (sscanf(*curr_pos, " %63[^:]: %63[^\r\n]", key, value) != 2)
+    if (sscanf(*curr_pos, " %63[^:]: %2047[^\r\n]", key, value) != 2)
       return -3;
     addstr(&arr->h_keys, key);
     addstr(&arr->h_values, value);
@@ -77,7 +79,10 @@ int parse_headers(http_request *arr, char **curr_pos, size_t *length) {
 
 int parse_request(http_request *arr, char *request, size_t length) {
   char *curr_pos = request;
-  parse_first_line(arr, &curr_pos, &length);
+  if (parse_first_line(arr, &curr_pos, &length) == -1) {
+    fprintf(stderr, "parse_first_line failed; first bytes: %.*s\n", (int)length, request);
+    return -5;
+  }
   int r = parse_headers(arr, &curr_pos, &length);
   return r;
 }
