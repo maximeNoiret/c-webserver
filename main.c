@@ -10,6 +10,7 @@
 #include <sys/sendfile.h>
 
 #include "server.h"
+#include "pages.h"
 
 int main() {
   // test request to make parser
@@ -49,17 +50,7 @@ int main() {
       exit(-1);
     }
 
-    if (strcmp(request.path.ptr, "/favicon.ico") == 0) {
-      char hdr[] =
-      "HTTP/1.1 404 Not Found\r\n"
-      "Content-Type: text/plain\r\n"
-      "Content-Length: 0\r\n"
-      "Connection: close\r\n"
-      "\r\n";
-
-      send(conn, hdr, sizeof(hdr) - 1, 0);  // -1 to skip the '\0'
-
-    }
+    
     http_request_printInfo(&request);
 
     int file = open(request.path.ptr+1, O_RDONLY);
