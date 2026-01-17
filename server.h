@@ -1,12 +1,14 @@
 #ifndef SERVER_H_
 #define SERVER_H_
 
+#include <chararray.h>
 #include <strarray.h>
 
+
 typedef struct {
-  StrArray method;
-  StrArray path;
-  StrArray version;
+  CharArray method;
+  CharArray path;
+  CharArray version;
   StrArray h_keys;
   StrArray h_values;
 } http_request;
@@ -16,10 +18,6 @@ int http_request_init(http_request *arr);
 int http_request_free(http_request *arr);
 
 void http_request_printInfo(http_request *arr);
-
-int parse_first_line(http_request *arr, char **curr_pos, size_t *length);
-
-int parse_headers(http_request *arr, char **curr_pos, size_t *length);
 
 /**
  * @brief Parses a raw http request into StrArray.
