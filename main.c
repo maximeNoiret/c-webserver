@@ -1,4 +1,3 @@
-
 #include <stdlib.h>
 #include <strarray.h>
 #include <string.h>
@@ -8,7 +7,6 @@
 #include "server.h"
 
 void generatePages(PageArray *arr) {
-  pagearr_addPage(arr, "/user", "UserPage.html");
   pagearr_addPage(arr, "/about", "AboutUs.html");
   pagearr_addPage(arr, "/", "index.html");
 }
