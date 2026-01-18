@@ -1,5 +1,5 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "pages.h"
@@ -7,7 +7,13 @@
 void page_printInfo(Page *page) {
   printf("    URI: %s\n    PATH: %s\n", page->uri.ptr, page->file_path.ptr);
 }
-void pagearr_printInfo(PageArray *arr);
+void pagearr_printInfo(PageArray *arr) {
+  printf("Pages:\n  Page Count: %zu\n  Allocated: %zu\n  Pages:\n", arr->n,
+         arr->c);
+  for (size_t i = 0; i < arr->n; ++i) {
+    page_printInfo(&arr->ptr[i]);
+  }
+}
 
 int page_init(Page *page) {
   carr_init(&page->uri, 0);
@@ -58,15 +64,15 @@ static int grow(PageArray *arr, size_t need) {
 int pagearr_addPage(PageArray *arr, char *uri, char *filePath) {
   grow(arr, arr->n + 1);
   page_init(&arr->ptr[arr->n++]);
-  setstr(&arr->ptr[arr->n-1].uri, uri);
-  setstr(&arr->ptr[arr->n-1].file_path, filePath);
+  setstr(&arr->ptr[arr->n - 1].uri, uri);
+  setstr(&arr->ptr[arr->n - 1].file_path, filePath);
   return 0;
 }
 
-
 int find_page(PageArray *arr, Page *page, const char *uri) {
   for (size_t i = 0; i < arr->n; ++i) {
-    if (arr->ptr[i].uri.length != strlen(uri)) continue;
+    if (arr->ptr[i].uri.length != strlen(uri))
+      continue;
     if (strncmp(arr->ptr[i].uri.ptr, uri, arr->ptr[i].uri.length) == 0) {
       // found page
       *page = arr->ptr[i];
