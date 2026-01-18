@@ -1,13 +1,17 @@
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "pages.h"
 
-void page_printInfo(Page *page, size_t level);
-void pagearr_printInfo(PageArray *arr, size_t level);
+void page_printInfo(Page *page) {
+  printf("    URI: %s\n    PATH: %s\n", page->uri.ptr, page->file_path.ptr);
+}
+void pagearr_printInfo(PageArray *arr);
 
 int page_init(Page *page) {
-  carr_init(page->uri, 0);
-  carr_init(page->file_path, 0);
+  carr_init(&page->uri, 0);
+  carr_init(&page->file_path, 0);
   return 0;
 } // page_init
 
@@ -17,7 +21,7 @@ int page_free(Page *page) {
   return 0;
 } // page_free
 
-int pagearr_init(PageArray *arr, size_t c); {
+int pagearr_init(PageArray *arr, size_t c) {
   arr->n = 0;
   arr->c = (c ? c : 1);
   arr->ptr = malloc(sizeof(Page) * arr->c);
@@ -29,7 +33,7 @@ int pagearr_init(PageArray *arr, size_t c); {
 
 int pagearr_free(PageArray *arr) {
   for (size_t i = 0; i < arr->n; ++i) {
-    page_free(arr->ptr[i]);
+    page_free(&arr->ptr[i]);
   }
 
   free(arr->ptr);
@@ -53,8 +57,21 @@ static int grow(PageArray *arr, size_t need) {
 
 int pagearr_addPage(PageArray *arr, char *uri, char *filePath) {
   grow(arr, arr->n + 1);
-  page_init(arr->ptr[arr->n++]);
-  setstr(arr->ptr[arr->n-1].uri, uri);
-  setstr(arr->ptr[arr->n-1].file_path, filePath);
+  page_init(&arr->ptr[arr->n++]);
+  setstr(&arr->ptr[arr->n-1].uri, uri);
+  setstr(&arr->ptr[arr->n-1].file_path, filePath);
   return 0;
+}
+
+
+int find_page(PageArray *arr, Page *page, const char *uri) {
+  for (size_t i = 0; i < arr->n; ++i) {
+    if (arr->ptr[i].uri.length != strlen(uri)) continue;
+    if (strncmp(arr->ptr[i].uri.ptr, uri, arr->ptr[i].uri.length) == 0) {
+      // found page
+      *page = arr->ptr[i];
+      return 0;
+    }
+  }
+  return -1;
 }

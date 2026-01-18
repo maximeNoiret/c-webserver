@@ -15,8 +15,8 @@ typedef struct {
 } PageArray;
 
 
-void page_printInfo(Page *page, size_t level);
-void pagearr_printInfo(PageArray *arr, size_t level);
+void page_printInfo(Page *page);
+void pagearr_printInfo(PageArray *arr);
 
 int page_init(Page *page);
 int page_free(Page *page);
@@ -24,6 +24,8 @@ int pagearr_init(PageArray *arr, size_t c);
 int pagearr_free(PageArray *arr);
 
 int pagearr_addPage(PageArray *arr, char *uri, char *filePath);
+
+int find_page(PageArray *arr, Page *page, const char *uri);
 
 
 #endif // PAGES_H_

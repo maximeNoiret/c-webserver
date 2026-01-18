@@ -12,7 +12,17 @@
 #include "server.h"
 #include "pages.h"
 
+void generatePages(PageArray *arr) {
+  pagearr_addPage(arr, "/user", "UserPage.html");
+  pagearr_addPage(arr, "/about", "AboutUs.html");
+  pagearr_addPage(arr, "/", "index.html");
+}
+
 int main() {
+  PageArray testPages;
+  pagearr_init(&testPages, 3);
+  generatePages(&testPages);
+  page_printInfo(&testPages.ptr[2]);
   // test request to make parser
   int fd = socket(AF_INET, SOCK_STREAM, 0);
   if (fd < 0) perror("socket");
@@ -49,23 +59,34 @@ int main() {
       printf("Error while parsing: %i\n", r);
       exit(-1);
     }
-
     
-    http_request_printInfo(&request);
+    //http_request_printInfo(&request);
 
-    int file = open(request.path.ptr+1, O_RDONLY);
+    Page page;
+    CharArray response_code;
+    carr_init(&response_code, 16);
+    page_init(&page);
+    int file;
+    if (find_page(&testPages, &page, request.path.ptr) == -1) {
+      file = open("404.html", O_RDONLY);
+      setstr(&response_code, "404 Not Found");
+    } else {
+      file = open(page.file_path.ptr, O_RDONLY);
+      setstr(&response_code, "200 OK");
+    }
+    page_printInfo(&page);
     struct stat st;
-    if (fstat(file, &st) == -1) { /* handle */ }
+    if (fstat(file, &st) == -1) { close(file); continue; }
     off_t size = st.st_size;
 
     char hdr[256];
     int hlen = snprintf(hdr, sizeof hdr,
-        "HTTP/1.1 200 OK\r\n"
+        "HTTP/1.1 %s\r\n"
         "Server: c-webserver_PURP\r\n"
         "Content-Length: %jd\r\n"
         "Content-Type: text/html\r\n"
         "Connection: close\r\n"
-        "\r\n", size);
+        "\r\n", response_code.ptr, size);
     if (hlen < 0 || (size_t)hlen >= sizeof hdr) { close(file); return -1; }
 
     if (send(conn, hdr, (size_t)hlen, 0) != hlen) { close(file); return -1; }
