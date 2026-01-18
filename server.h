@@ -1,23 +1,14 @@
 #ifndef SERVER_H_
 #define SERVER_H_
 
-#include <chararray.h>
-#include <strarray.h>
+#include "http_request.h"
+#include "pages.h"
 
 
-typedef struct {
-  CharArray method;
-  CharArray path;
-  CharArray version;
-  StrArray h_keys;
-  StrArray h_values;
-} http_request;
+int setup_server();
 
-int http_request_init(http_request *arr);
+int main_loop(PageArray *pages);
 
-int http_request_free(http_request *arr);
-
-void http_request_printInfo(http_request *arr);
 
 /**
  * @brief Parses a raw http request into StrArray.

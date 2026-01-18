@@ -6,14 +6,16 @@
 
 void page_printInfo(Page *page) {
   printf("    URI: %s\n    PATH: %s\n", page->uri.ptr, page->file_path.ptr);
-}
+} // page_printInfo
+
 void pagearr_printInfo(PageArray *arr) {
   printf("Pages:\n  Page Count: %zu\n  Allocated: %zu\n  Pages:\n", arr->n,
          arr->c);
   for (size_t i = 0; i < arr->n; ++i) {
     page_printInfo(&arr->ptr[i]);
   }
-}
+} // pagearr_printInfo
+
 
 int page_init(Page *page) {
   carr_init(&page->uri, 0);
@@ -35,7 +37,7 @@ int pagearr_init(PageArray *arr, size_t c) {
     return -1;
 
   return 0;
-}
+} // pagearr_init
 
 int pagearr_free(PageArray *arr) {
   for (size_t i = 0; i < arr->n; ++i) {
@@ -44,7 +46,7 @@ int pagearr_free(PageArray *arr) {
 
   free(arr->ptr);
   return 0;
-}
+} // pagearr_free
 
 static int grow(PageArray *arr, size_t need) {
   if (need <= arr->c)
@@ -59,7 +61,7 @@ static int grow(PageArray *arr, size_t need) {
   arr->ptr = tmp;
   arr->c = new_c;
   return 0;
-}
+} // grow
 
 int pagearr_addPage(PageArray *arr, char *uri, char *filePath) {
   grow(arr, arr->n + 1);
@@ -67,7 +69,7 @@ int pagearr_addPage(PageArray *arr, char *uri, char *filePath) {
   setstr(&arr->ptr[arr->n - 1].uri, uri);
   setstr(&arr->ptr[arr->n - 1].file_path, filePath);
   return 0;
-}
+} // pagearr_addPage
 
 int find_page(PageArray *arr, Page *page, const char *uri) {
   for (size_t i = 0; i < arr->n; ++i) {
@@ -80,4 +82,4 @@ int find_page(PageArray *arr, Page *page, const char *uri) {
     }
   }
   return -1;
-}
+} // find_page
