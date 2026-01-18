@@ -61,20 +61,19 @@ int main_loop(PageArray *pages) {
 
     // http_request_printInfo(&request);
 
-    Page page;
+    Page *page;
     CharArray response_code;
     carr_init(&response_code, 16);
-    page_init(&page);
     int file;
-    if (find_page(pages, &page, request.path.ptr) == -1) {
+    page = find_page(pages, request.path.ptr);
+    if (page == NULL) {
       file = open("404.html", O_RDONLY);
       setstr(&response_code, "404 Not Found");
     } else {
-      file = open(page.file_path.ptr, O_RDONLY);
+      file = open(page->file_path.ptr, O_RDONLY);
       setstr(&response_code, "200 OK");
     }
-    page_printInfo(&page);
-    page_free(&page);
+    page_printInfo(page);
     http_request_free(&request);
 
     struct stat st;
@@ -109,7 +108,6 @@ int main_loop(PageArray *pages) {
     if (sent != st.st_size)
       return -1;
     close(conn);
-
   }
 
   close(sock_fd);

@@ -25,7 +25,7 @@ int pagearr_free(PageArray *arr);
 
 int pagearr_addPage(PageArray *arr, char *uri, char *filePath);
 
-int find_page(PageArray *arr, Page *page, const char *uri);
+Page *find_page(PageArray *arr, const char *uri);
 
 
 #endif // PAGES_H_

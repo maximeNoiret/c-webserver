@@ -19,5 +19,9 @@ int main() {
   generatePages(&testPages);
   pagearr_printInfo(&testPages);
   // test request to make parser
-  return main_loop(&testPages);
+  int ret_val = main_loop(&testPages);
+
+  pagearr_free(&testPages);
+
+  return ret_val;
 }

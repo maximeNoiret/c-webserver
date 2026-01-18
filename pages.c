@@ -71,15 +71,14 @@ int pagearr_addPage(PageArray *arr, char *uri, char *filePath) {
   return 0;
 } // pagearr_addPage
 
-int find_page(PageArray *arr, Page *page, const char *uri) {
+Page *find_page(PageArray *arr, const char *uri) {
   for (size_t i = 0; i < arr->n; ++i) {
     if (arr->ptr[i].uri.length != strlen(uri))
       continue;
     if (strncmp(arr->ptr[i].uri.ptr, uri, arr->ptr[i].uri.length) == 0) {
       // found page
-      *page = arr->ptr[i];
-      return 0;
+      return &arr->ptr[i];
     }
   }
-  return -1;
+  return NULL;
 } // find_page
