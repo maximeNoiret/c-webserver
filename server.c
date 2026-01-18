@@ -72,8 +72,8 @@ int main_loop(PageArray *pages) {
     } else {
       file = open(page->file_path.ptr, O_RDONLY);
       setstr(&response_code, "200 OK");
+      page_printInfo(page);
     }
-    page_printInfo(page);
     http_request_free(&request);
 
     struct stat st;
